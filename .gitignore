@@ -46,4 +46,5 @@ CTestTestfile.cmake
 _deps
 
 build/
-vcpkg_installed
+vcpkg_installed.vscode/
+.vscode/
