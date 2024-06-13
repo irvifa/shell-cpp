@@ -7,10 +7,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <cstring>
+#include <functional>
 
 namespace ShellNamespace {
 
-    bool ExitCommand::execute(const std::vector<std::string>& args) {
+    bool exitCommandFunc(const std::vector<std::string>& args) {
         if (args.size() == 1) {
             try {
                 int exit_code = std::stoi(args[0]);
@@ -29,7 +30,9 @@ namespace ShellNamespace {
         return false;
     }
 
-    bool EchoCommand::execute(const std::vector<std::string>& args) {
+    ExitCommand::ExitCommand() : CommandTemplate(exitCommandFunc) {}
+
+    bool echoCommandFunc(const std::vector<std::string>& args) {
         bool omit_newline = false;
         std::vector<std::string> echo_args = args;
 
@@ -54,7 +57,9 @@ namespace ShellNamespace {
         return true;
     }
 
-    bool CdCommand::execute(const std::vector<std::string>& args) {
+    EchoCommand::EchoCommand() : CommandTemplate(echoCommandFunc) {}
+
+    bool cdCommandFunc(const std::vector<std::string>& args) {
         if (args.size() != 1) {
             std::cerr << "cd: invalid number of arguments" << std::endl;
             return true;
@@ -79,10 +84,9 @@ namespace ShellNamespace {
         return true;
     }
 
-    TypeCommand::TypeCommand(const std::unordered_set<std::string>& builtins)
-        : builtins(builtins) {}
+    CdCommand::CdCommand() : CommandTemplate(cdCommandFunc) {}
 
-    bool TypeCommand::execute(const std::vector<std::string>& args) {
+    bool typeCommandFunc(const std::vector<std::string>& args, const std::unordered_set<std::string>& builtins) {
         if (args.size() != 1) {
             std::cerr << "type: invalid number of arguments" << std::endl;
             return true;
@@ -124,6 +128,18 @@ namespace ShellNamespace {
 
         std::cout << command_name << ": not found" << std::endl;
         return true;
+    }
+
+    TypeCommand::TypeCommand(const std::unordered_set<std::string>& builtins)
+        : CommandTemplate([builtins](const std::vector<std::string>& args) { return typeCommandFunc(args, builtins); }) {}
+
+    void initializeBuiltins(std::unordered_map<std::string, std::unique_ptr<CommandInterface>>& commands,
+                            std::unordered_set<std::string>& builtins) {
+        builtins = {"exit", "echo", "cd", "type"};
+        commands["exit"] = std::make_unique<ExitCommand>();
+        commands["echo"] = std::make_unique<EchoCommand>();
+        commands["cd"] = std::make_unique<CdCommand>();
+        commands["type"] = std::make_unique<TypeCommand>(builtins);
     }
 
 }
