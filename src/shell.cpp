@@ -2,6 +2,9 @@
 #include "commands.h"
 #include <iostream>
 #include <sstream>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 namespace ShellNamespace {
     Shell::Shell() {
@@ -31,7 +34,7 @@ namespace ShellNamespace {
 
             // Validate and execute the command
             if (!execute(command)) {
-                std::cout << command.name << ": not found" << std::endl;
+                runExternalCommand(command);
             }
         }
     }
@@ -61,5 +64,29 @@ namespace ShellNamespace {
             return true;
         }
         return false;
+    }
+
+    void Shell::runExternalCommand(const Command& command) {
+        pid_t pid = fork();
+        if (pid == 0) {
+            // Child process
+            std::vector<char*> args;
+            args.push_back(const_cast<char*>(command.name.c_str()));
+            for (const std::string& arg : command.args) {
+                args.push_back(const_cast<char*>(arg.c_str()));
+            }
+            args.push_back(nullptr);
+
+            execvp(args[0], args.data());
+            // If execvp returns, there was an error
+            std::cerr << command.name << ": command not found" << std::endl;
+            exit(1);
+        } else if (pid > 0) {
+            // Parent process
+            int status;
+            waitpid(pid, &status, 0);
+        } else {
+            std::cerr << "Failed to fork" << std::endl;
+        }
     }
 }

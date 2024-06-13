@@ -23,6 +23,7 @@ namespace ShellNamespace {
 
         Command tokenize(const std::string& input);
         bool execute(const Command& command);
+        void runExternalCommand(const Command& command);
     };
 }
 
