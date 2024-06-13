@@ -5,8 +5,10 @@
 
 namespace ShellNamespace {
     Shell::Shell() {
+        builtins = {"exit", "echo", "type"};
         commands["exit"] = std::make_unique<ExitCommand>();
         commands["echo"] = std::make_unique<EchoCommand>();
+        commands["type"] = std::make_unique<TypeCommand>(builtins); // Pass builtins to TypeCommand
     }
 
     void Shell::run() {
@@ -29,7 +31,7 @@ namespace ShellNamespace {
 
             // Validate and execute the command
             if (!execute(command)) {
-                std::cout << command.name << ": command not found" << std::endl;
+                std::cout << command.name << ": not found" << std::endl;
             }
         }
     }

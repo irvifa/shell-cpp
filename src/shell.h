@@ -3,6 +3,7 @@
 
 #include "command_interface.h"
 #include <unordered_map>
+#include <unordered_set>
 #include <memory>
 #include <string>
 
@@ -18,6 +19,7 @@ namespace ShellNamespace {
         };
 
         std::unordered_map<std::string, std::unique_ptr<CommandInterface>> commands;
+        std::unordered_set<std::string> builtins;
 
         Command tokenize(const std::string& input);
         bool execute(const Command& command);
