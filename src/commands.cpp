@@ -54,6 +54,20 @@ namespace ShellNamespace {
         return true;
     }
 
+    bool CdCommand::execute(const std::vector<std::string>& args) {
+        if (args.size() != 1) {
+            std::cerr << "cd: invalid number of arguments" << std::endl;
+            return true;
+        }
+
+        const std::string& path = args[0];
+
+        if (chdir(path.c_str()) != 0) {
+            std::cerr << "cd: " << path << ": No such file or directory" << std::endl;
+        }
+        return true;
+    }
+
     TypeCommand::TypeCommand(const std::unordered_set<std::string>& builtins)
         : builtins(builtins) {}
 

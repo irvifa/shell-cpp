@@ -18,6 +18,11 @@ namespace ShellNamespace {
         bool execute(const std::vector<std::string>& args) override;
     };
 
+    class CdCommand : public CommandInterface {
+    public:
+        bool execute(const std::vector<std::string>& args) override;
+    };
+
     class TypeCommand : public CommandInterface {
     public:
         TypeCommand(const std::unordered_set<std::string>& builtins);

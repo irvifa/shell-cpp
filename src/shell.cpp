@@ -8,9 +8,10 @@
 
 namespace ShellNamespace {
     Shell::Shell() {
-        builtins = {"exit", "echo", "type"};
+        builtins = {"exit", "echo", "type", "cd"};
         commands["exit"] = std::make_unique<ExitCommand>();
         commands["echo"] = std::make_unique<EchoCommand>();
+        commands["cd"] = std::make_unique<CdCommand>();
         commands["type"] = std::make_unique<TypeCommand>(builtins); // Pass builtins to TypeCommand
     }
 
