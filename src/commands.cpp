@@ -60,7 +60,18 @@ namespace ShellNamespace {
             return true;
         }
 
-        const std::string& path = args[0];
+        std::string path = args[0];
+
+        // Handle the ~ character
+        if (path == "~") {
+            char* home_dir = getenv("HOME");
+            if (home_dir) {
+                path = home_dir;
+            } else {
+                std::cerr << "cd: HOME environment variable not set" << std::endl;
+                return true;
+            }
+        }
 
         if (chdir(path.c_str()) != 0) {
             std::cerr << "cd: " << path << ": No such file or directory" << std::endl;
