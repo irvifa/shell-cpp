@@ -1,13 +1,24 @@
 #include <iostream>
+#include <string>
 
 int main() {
-  // Flush after every std::cout / std:cerr
-  std::cout << std::unitbuf;
-  std::cerr << std::unitbuf;
+    std::string command;
 
-  std::cout << "$ ";
-  
-  std::string input;
-  std::getline(std::cin, input);
-  std::cout << input << ": command not found\n";
+    while (true) {
+        // Print the prompt
+        std::cout << "$ ";
+
+        // Read user input
+        std::getline(std::cin, command);
+
+        // If command is empty, continue to next iteration
+        if (command.empty()) {
+            continue;
+        }
+
+        // Print the command not found message
+        std::cout << command << ": command not found" << std::endl;
+    }
+
+    return 0;
 }
